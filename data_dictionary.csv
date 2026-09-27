@@ -1,0 +1,66 @@
+﻿Table,Field,Data Type,Key/Constraint,Description,Remark
+categories,category_id,INT,PK,รหัสหมวดหมู่,"ไม่ซ้ำ, Auto Increment"
+categories,category_name,VARCHAR(100),"UNIQUE, NOT NULL",ชื่อหมวดหมู่,ต้องไม่ซ้ำ
+categories,description,VARCHAR(255),NULL,รายละเอียด,รายละเอียดเพิ่มเติม
+categories,active,BOOLEAN,NOT NULL,สถานะใช้งาน,"TRUE=ใช้งาน, FALSE=ไม่ใช้งาน"
+customers,customer_id,INT,PK,รหัสลูกค้า,Auto Increment
+customers,customer_code,VARCHAR(20),"UNIQUE, NOT NULL",รหัสลูกค้าแบบอ่านง่าย,เช่น CUS001
+customers,customer_name,VARCHAR(150),NOT NULL,ชื่อลูกค้า,รองรับชื่อ-นามสกุล
+customers,phone,VARCHAR(20),NULL,เบอร์โทรศัพท์,ข้อมูลติดต่อ
+customers,email,VARCHAR(150),NULL,อีเมล,ข้อมูลติดต่อ
+customers,address,VARCHAR(255),NULL,ที่อยู่,ที่อยู่ลูกค้า
+customers,active,BOOLEAN,NOT NULL,สถานะใช้งาน,TRUE/FALSE
+employees,employee_id,INT,PK,รหัสพนักงาน,Auto Increment
+employees,employee_code,VARCHAR(20),"UNIQUE, NOT NULL",รหัสพนักงานแบบอ่านง่าย,เช่น EMP001
+employees,employee_name,VARCHAR(150),NOT NULL,ชื่อพนักงาน,ชื่อ-นามสกุล
+employees,phone,VARCHAR(20),NULL,เบอร์โทรศัพท์,ข้อมูลติดต่อ
+employees,position,VARCHAR(80),NOT NULL,ตำแหน่ง,เช่น Cashier
+employees,hire_date,DATE,NOT NULL,วันที่เริ่มงาน,รูปแบบ YYYY-MM-DD
+employees,active,BOOLEAN,NOT NULL,สถานะใช้งาน,TRUE/FALSE
+suppliers,supplier_id,INT,PK,รหัสผู้จำหน่าย,Auto Increment
+suppliers,supplier_code,VARCHAR(20),"UNIQUE, NOT NULL",รหัสผู้จำหน่าย,เช่น SUP001
+suppliers,supplier_name,VARCHAR(150),NOT NULL,ชื่อผู้จำหน่าย,ชื่อบริษัท/ร้าน
+suppliers,contact_name,VARCHAR(150),NULL,ชื่อผู้ติดต่อ,ผู้ติดต่อของ Supplier
+suppliers,phone,VARCHAR(20),NULL,เบอร์โทรศัพท์,ข้อมูลติดต่อ
+suppliers,email,VARCHAR(150),NULL,อีเมล,ข้อมูลติดต่อ
+suppliers,address,VARCHAR(255),NULL,ที่อยู่,ที่อยู่ผู้จำหน่าย
+suppliers,active,BOOLEAN,NOT NULL,สถานะใช้งาน,TRUE/FALSE
+products,product_id,INT,PK,รหัสสินค้า,Auto Increment
+products,product_code,VARCHAR(30),"UNIQUE, NOT NULL",รหัสสินค้า,เช่น P001
+products,barcode,VARCHAR(30),UNIQUE,บาร์โค้ด,ถ้ามีต้องไม่ซ้ำ
+products,product_name,VARCHAR(150),NOT NULL,ชื่อสินค้า,ชื่อสินค้า
+products,category_id,INT,"FK, NOT NULL",รหัสหมวดหมู่,อ้างอิง categories
+products,unit,VARCHAR(30),NOT NULL,หน่วยนับ,เช่น ขวด/ถุง/ชิ้น
+products,cost_price,"DECIMAL(12,2)",NOT NULL,ราคาทุน,>= 0
+products,selling_price,"DECIMAL(12,2)",NOT NULL,ราคาขาย,>= 0
+products,stock_qty,INT,NOT NULL,จำนวนคงเหลือ,>= 0
+products,reorder_level,INT,NOT NULL,จุดสั่งซื้อใหม่,>= 0
+products,active,BOOLEAN,NOT NULL,สถานะสินค้า,TRUE/FALSE
+sales,sale_id,INT,PK,รหัสการขาย,Auto Increment
+sales,sale_no,VARCHAR(30),"UNIQUE, NOT NULL",เลขที่บิลขาย,เช่น S20260927001
+sales,sale_datetime,DATETIME,NOT NULL,วันเวลาเกิดรายการ,เวลาขาย
+sales,customer_id,INT,"FK, NULL",รหัสลูกค้า,NULL ได้สำหรับ Walk-in
+sales,employee_id,INT,"FK, NOT NULL",รหัสพนักงาน,ผู้บันทึกการขาย
+sales,discount_amount,"DECIMAL(12,2)",NOT NULL,ส่วนลด,>= 0
+sales,notes,VARCHAR(255),NULL,หมายเหตุ,ข้อมูลเพิ่มเติม
+sale_items,sale_id,INT,"PK, FK",รหัสบิลขาย,ส่วนหนึ่งของ Composite PK
+sale_items,product_id,INT,"PK, FK",รหัสสินค้า,ส่วนหนึ่งของ Composite PK
+sale_items,quantity,INT,NOT NULL,จำนวนที่ขาย,> 0
+sale_items,unit_price,"DECIMAL(12,2)",NOT NULL,ราคาขายต่อหน่วย ณ เวลาขาย,>= 0
+purchases,purchase_id,INT,PK,รหัสการซื้อ,Auto Increment
+purchases,purchase_no,VARCHAR(30),"UNIQUE, NOT NULL",เลขที่ใบซื้อ/รับสินค้า,เช่น PO20260927001
+purchases,purchase_datetime,DATETIME,NOT NULL,วันเวลาซื้อ/รับสินค้า,เวลารับสินค้า
+purchases,supplier_id,INT,"FK, NOT NULL",รหัสผู้จำหน่าย,อ้างอิง suppliers
+purchases,employee_id,INT,"FK, NOT NULL",รหัสพนักงาน,ผู้รับ/บันทึกรายการ
+purchases,notes,VARCHAR(255),NULL,หมายเหตุ,ข้อมูลเพิ่มเติม
+purchase_items,purchase_id,INT,"PK, FK",รหัสรายการซื้อ,ส่วนหนึ่งของ Composite PK
+purchase_items,product_id,INT,"PK, FK",รหัสสินค้า,ส่วนหนึ่งของ Composite PK
+purchase_items,quantity,INT,NOT NULL,จำนวนที่รับ,> 0
+purchase_items,unit_cost,"DECIMAL(12,2)",NOT NULL,ราคาทุนต่อหน่วย ณ เวลาซื้อ,>= 0
+payments,payment_id,INT,PK,รหัสการชำระเงิน,Auto Increment
+payments,payment_id,INT,PK,รหัสการชำระเงิน,Auto Increment
+payments,sale_id,INT,"UNIQUE, FK, NOT NULL",รหัสบิลขาย,1 Sale มี Payment ได้ไม่เกิน 1
+payments,payment_datetime,DATETIME,NOT NULL,วันเวลาชำระเงิน,เวลาชำระ
+payments,payment_method,VARCHAR(20),NOT NULL,วิธีชำระเงิน,CASH/TRANSFER/CARD/QR
+payments,amount,"DECIMAL(12,2)",NOT NULL,จำนวนเงินที่ชำระ,>= 0
+payments,reference_no,VARCHAR(80),NULL,เลขอ้างอิง,ใช้กับ Transfer/QR/Card ได้
