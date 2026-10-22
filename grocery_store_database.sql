@@ -25,7 +25,11 @@ CREATE TABLE customers (
     phone VARCHAR(20),
     email VARCHAR(150),
     address VARCHAR(255),
-    active BOOLEAN NOT NULL DEFAULT TRUE
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    credit_balance DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    loyalty_points INT NOT NULL DEFAULT 0,
+    CONSTRAINT chk_customer_credit CHECK (credit_balance >= 0),
+    CONSTRAINT chk_customer_points CHECK (loyalty_points >= 0)
 ) ENGINE=InnoDB;
 
 CREATE TABLE employees (
@@ -58,8 +62,9 @@ CREATE TABLE products (
     unit VARCHAR(30) NOT NULL,
     cost_price DECIMAL(12,2) NOT NULL DEFAULT 0.00,
     selling_price DECIMAL(12,2) NOT NULL DEFAULT 0.00,
-    stock_qty INT NOT NULL DEFAULT 0,
-    reorder_level INT NOT NULL DEFAULT 0,
+    stock_qty DECIMAL(12,3) NOT NULL DEFAULT 0.000,
+    reorder_level DECIMAL(12,3) NOT NULL DEFAULT 0.000,
+    expiry_date DATE NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT chk_product_cost CHECK (cost_price >= 0),
     CONSTRAINT chk_product_selling CHECK (selling_price >= 0),
@@ -107,7 +112,7 @@ CREATE TABLE purchases (
 CREATE TABLE sale_items (
     sale_id INT NOT NULL,
     product_id INT NOT NULL,
-    quantity INT NOT NULL,
+    quantity DECIMAL(12,3) NOT NULL,
     unit_price DECIMAL(12,2) NOT NULL,
     PRIMARY KEY (sale_id, product_id),
     CONSTRAINT chk_sale_item_qty CHECK (quantity > 0),
@@ -123,7 +128,7 @@ CREATE TABLE sale_items (
 CREATE TABLE purchase_items (
     purchase_id INT NOT NULL,
     product_id INT NOT NULL,
-    quantity INT NOT NULL,
+    quantity DECIMAL(12,3) NOT NULL,
     unit_cost DECIMAL(12,2) NOT NULL,
     PRIMARY KEY (purchase_id, product_id),
     CONSTRAINT chk_purchase_item_qty CHECK (quantity > 0),
@@ -143,15 +148,30 @@ CREATE TABLE payments (
     payment_method VARCHAR(20) NOT NULL,
     amount DECIMAL(12,2) NOT NULL,
     reference_no VARCHAR(80),
-    CONSTRAINT chk_payment_method CHECK (payment_method IN ('CASH','TRANSFER','CARD','QR')),
+    CONSTRAINT chk_payment_method CHECK (payment_method IN ('CASH','TRANSFER','CARD','QR','CREDIT')),
     CONSTRAINT chk_payment_amount CHECK (amount >= 0),
     CONSTRAINT fk_payment_sale
         FOREIGN KEY (sale_id) REFERENCES sales(sale_id)
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- 3.5) CASHIER SHIFT / DAY-END SUMMARY
+CREATE TABLE IF NOT EXISTS cashier_shifts (
+    shift_id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    opened_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    closed_at DATETIME NULL,
+    opening_cash DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    closing_cash_expected DECIMAL(12,2) NULL,
+    closing_cash_actual DECIMAL(12,2) NULL,
+    notes VARCHAR(255),
+    CONSTRAINT fk_shift_employee FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
 -- 4) INDEXES
 CREATE INDEX idx_product_category ON products(category_id);
+CREATE INDEX idx_product_expiry ON products(expiry_date);
 CREATE INDEX idx_sale_customer ON sales(customer_id);
 CREATE INDEX idx_sale_employee ON sales(employee_id);
 CREATE INDEX idx_sale_datetime ON sales(sale_datetime);
@@ -282,7 +302,7 @@ ORDER BY stock_qty ASC;
 CREATE OR REPLACE VIEW v_product_stock AS
 SELECT p.product_id, p.product_code, p.product_name,
        c.category_name, p.unit, p.selling_price,
-       p.stock_qty, p.reorder_level,
+       p.stock_qty, p.reorder_level, p.expiry_date,
        CASE
          WHEN p.stock_qty <= p.reorder_level THEN 'REORDER'
          ELSE 'OK'

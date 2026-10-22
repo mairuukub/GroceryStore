@@ -1,25 +1,38 @@
+"""Initialize/reset the grocery_store database from the SQL script.
+
+WARNING: grocery_store_database.sql starts with DROP DATABASE IF EXISTS.
+This will permanently delete an existing grocery_store database. Set RESET_DB=YES
+to confirm before running this script.
+"""
+import os
+from pathlib import Path
 import pymysql
 
-DB_HOST = "10.10.10.38"
-DB_USER = "root"
-DB_PASS = "0837741136"
+BASE_DIR = Path(__file__).resolve().parent
+if os.getenv("RESET_DB") != "YES":
+    raise SystemExit(
+        "ยกเลิกเพื่อป้องกันข้อมูลหาย: ไฟล์ SQL จะลบฐานข้อมูล grocery_store เดิม\n"
+        "สำรองข้อมูลก่อน แล้วตั้งค่า RESET_DB=YES เพื่อยืนยันการรีเซ็ตฐานข้อมูล"
+    )
 
-print("กำลังเชื่อมต่อ Database...")
-conn = pymysql.connect(
-    host=DB_HOST,
-    user=DB_USER,
-    password=DB_PASS,
-    client_flag=pymysql.constants.CLIENT.MULTI_STATEMENTS,
-    autocommit=True
-)
-
-print("กำลังอ่านไฟล์ grocery_store_database.sql...")
-with open("grocery_store_database.sql", "r", encoding="utf-8") as f:
-    sql_script = f.read()
-
-print("กำลังนำเข้าข้อมูลลง MySQL...")
-with conn.cursor() as cursor:
-    cursor.execute(sql_script)
-
-conn.close()
-print("สร้าง Database และนำเข้าข้อมูลเรียบร้อย 100%!")
+config = {
+    "host": os.getenv("DB_HOST", "127.0.0.1"),
+    "port": int(os.getenv("DB_PORT", "3306")),
+    "user": os.getenv("DB_USER", "root"),
+    "password": os.getenv("DB_PASSWORD", ""),
+    "charset": "utf8mb4",
+    "client_flag": pymysql.constants.CLIENT.MULTI_STATEMENTS,
+    "autocommit": True,
+}
+sql_path = BASE_DIR / "grocery_store_database.sql"
+print(f"กำลังเชื่อมต่อ MySQL {config['host']}:{config['port']} ...")
+conn = pymysql.connect(**config)
+try:
+    sql_script = sql_path.read_text(encoding="utf-8-sig")
+    with conn.cursor() as cursor:
+        cursor.execute(sql_script)
+        while cursor.nextset():
+            pass
+    print("นำเข้าฐานข้อมูลและข้อมูลตัวอย่างเรียบร้อย")
+finally:
+    conn.close()
