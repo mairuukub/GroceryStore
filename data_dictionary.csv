@@ -1,67 +1,43 @@
 ﻿Table,Field,Data Type,Key/Constraint,Description,Remark
-categories,category_id,INT,PK,รหัสหมวดหมู่,"ไม่ซ้ำ, Auto Increment"
-categories,category_name,VARCHAR(100),"UNIQUE, NOT NULL",ชื่อหมวดหมู่,ต้องไม่ซ้ำ
-categories,description,VARCHAR(255),NULL,รายละเอียด,รายละเอียดเพิ่มเติม
-categories,active,BOOLEAN,NOT NULL,สถานะใช้งาน,"TRUE=ใช้งาน, FALSE=ไม่ใช้งาน"
-customers,customer_id,INT,PK,รหัสลูกค้า,Auto Increment
-customers,customer_code,VARCHAR(20),"UNIQUE, NOT NULL",รหัสลูกค้าแบบอ่านง่าย,เช่น CUS001
-customers,customer_name,VARCHAR(150),NOT NULL,ชื่อลูกค้า,รองรับชื่อ-นามสกุล
-customers,phone,VARCHAR(20),NULL,เบอร์โทรศัพท์,ข้อมูลติดต่อ
-customers,email,VARCHAR(150),NULL,อีเมล,ข้อมูลติดต่อ
-customers,address,VARCHAR(255),NULL,ที่อยู่,ที่อยู่ลูกค้า
-customers,active,BOOLEAN,NOT NULL,สถานะใช้งาน,TRUE/FALSE
-employees,employee_id,INT,PK,รหัสพนักงาน,Auto Increment
-employees,employee_code,VARCHAR(20),"UNIQUE, NOT NULL",รหัสพนักงานแบบอ่านง่าย,เช่น EMP001
-employees,employee_name,VARCHAR(150),NOT NULL,ชื่อพนักงาน,ชื่อ-นามสกุล
-employees,phone,VARCHAR(20),NULL,เบอร์โทรศัพท์,ข้อมูลติดต่อ
-employees,position,VARCHAR(80),NOT NULL,ตำแหน่ง,เช่น Cashier
-employees,hire_date,DATE,NOT NULL,วันที่เริ่มงาน,รูปแบบ YYYY-MM-DD
-employees,active,BOOLEAN,NOT NULL,สถานะใช้งาน,TRUE/FALSE
-suppliers,supplier_id,INT,PK,รหัสผู้จำหน่าย,Auto Increment
-suppliers,supplier_code,VARCHAR(20),"UNIQUE, NOT NULL",รหัสผู้จำหน่าย,เช่น SUP001
-suppliers,supplier_name,VARCHAR(150),NOT NULL,ชื่อผู้จำหน่าย,ชื่อบริษัท/ร้าน
-suppliers,contact_name,VARCHAR(150),NULL,ชื่อผู้ติดต่อ,ผู้ติดต่อของ Supplier
-suppliers,phone,VARCHAR(20),NULL,เบอร์โทรศัพท์,ข้อมูลติดต่อ
-suppliers,email,VARCHAR(150),NULL,อีเมล,ข้อมูลติดต่อ
-suppliers,address,VARCHAR(255),NULL,ที่อยู่,ที่อยู่ผู้จำหน่าย
-suppliers,active,BOOLEAN,NOT NULL,สถานะใช้งาน,TRUE/FALSE
-products,product_id,INT,PK,รหัสสินค้า,Auto Increment
-products,product_code,VARCHAR(30),"UNIQUE, NOT NULL",รหัสสินค้า,เช่น P001
-products,barcode,VARCHAR(30),UNIQUE,บาร์โค้ด,ถ้ามีต้องไม่ซ้ำ
+categories,category_id,INT,"PK, AUTO_INCREMENT",รหัสหมวดหมู่,รหัสหลักของหมวดหมู่
+categories,category_name,VARCHAR(100),"UNIQUE, NOT NULL",ชื่อหมวดหมู่,ชื่อหมวดหมู่ต้องไม่ซ้ำ
+categories,description,VARCHAR(255),NULL,รายละเอียดหมวดหมู่,ข้อมูลเพิ่มเติม
+categories,active,BOOLEAN,"NOT NULL, DEFAULT TRUE",สถานะใช้งาน,"TRUE=ใช้งาน, FALSE=ปิดใช้งาน"
+products,product_id,INT,"PK, AUTO_INCREMENT",รหัสสินค้า,รหัสหลักของสินค้า
+products,product_code,VARCHAR(30),"UNIQUE, NOT NULL",รหัสสินค้าแบบอ่านง่าย,ตัวอย่าง P001
+products,barcode,VARCHAR(30),"UNIQUE, NULL",บาร์โค้ดสินค้า,ถ้ามีต้องไม่ซ้ำ
 products,product_name,VARCHAR(150),NOT NULL,ชื่อสินค้า,ชื่อสินค้า
-products,category_id,INT,"FK, NOT NULL",รหัสหมวดหมู่,อ้างอิง categories
-products,unit,VARCHAR(30),NOT NULL,หน่วยนับ,เช่น ขวด/ถุง/ชิ้น
-products,cost_price,"DECIMAL(12,2)",NOT NULL,ราคาทุน,>= 0
-products,selling_price,"DECIMAL(12,2)",NOT NULL,ราคาขาย,>= 0
-products,stock_qty,INT,NOT NULL,จำนวนคงเหลือ,>= 0
-products,reorder_level,INT,NOT NULL,จุดสั่งซื้อใหม่,>= 0
-products,active,BOOLEAN,NOT NULL,สถานะสินค้า,TRUE/FALSE
-sales,sale_id,INT,PK,รหัสการขาย,Auto Increment
-sales,sale_no,VARCHAR(30),"UNIQUE, NOT NULL",เลขที่บิลขาย,เช่น S20260927001
-sales,sale_datetime,DATETIME,NOT NULL,วันเวลาเกิดรายการ,เวลาขาย
-sales,customer_id,INT,"FK, NULL",รหัสลูกค้า,NULL ได้สำหรับ Walk-in
-sales,employee_id,INT,"FK, NOT NULL",รหัสพนักงาน,ผู้บันทึกการขาย
-sales,discount_amount,"DECIMAL(12,2)",NOT NULL,ส่วนลด,>= 0
-sales,notes,VARCHAR(255),NULL,หมายเหตุ,ข้อมูลเพิ่มเติม
-sale_items,sale_id,INT,"PK, FK",รหัสบิลขาย,ส่วนหนึ่งของ Composite PK
-sale_items,product_id,INT,"PK, FK",รหัสสินค้า,ส่วนหนึ่งของ Composite PK
-sale_items,quantity,INT,NOT NULL,จำนวนที่ขาย,> 0
-sale_items,unit_price,"DECIMAL(12,2)",NOT NULL,ราคาขายต่อหน่วย ณ เวลาขาย,>= 0
-purchases,purchase_id,INT,PK,รหัสการซื้อ,Auto Increment
-purchases,purchase_no,VARCHAR(30),"UNIQUE, NOT NULL",เลขที่ใบซื้อ/รับสินค้า,เช่น PO20260927001
-purchases,purchase_datetime,DATETIME,NOT NULL,วันเวลาซื้อ/รับสินค้า,เวลารับสินค้า
-purchases,supplier_id,INT,"FK, NOT NULL",รหัสผู้จำหน่าย,อ้างอิง suppliers
-purchases,employee_id,INT,"FK, NOT NULL",รหัสพนักงาน,ผู้รับ/บันทึกรายการ
-purchases,notes,VARCHAR(255),NULL,หมายเหตุ,ข้อมูลเพิ่มเติม
-purchase_items,purchase_id,INT,"PK, FK",รหัสรายการซื้อ,ส่วนหนึ่งของ Composite PK
-purchase_items,product_id,INT,"PK, FK",รหัสสินค้า,ส่วนหนึ่งของ Composite PK
-purchase_items,quantity,INT,NOT NULL,จำนวนที่รับ,> 0
-purchase_items,unit_cost,"DECIMAL(12,2)",NOT NULL,ราคาทุนต่อหน่วย ณ เวลาซื้อ,>= 0
-payments,payment_id,INT,PK,รหัสการชำระเงิน,Auto Increment
-payments,payment_id,INT,PK,รหัสการชำระเงิน,Auto Increment
-payments,sale_id,INT,"UNIQUE, FK, NOT NULL",รหัสบิลขาย,1 Sale มี Payment ได้ไม่เกิน 1
-payments,payment_datetime,DATETIME,NOT NULL,วันเวลาชำระเงิน,เวลาชำระ
-payments,payment_method,VARCHAR(20),NOT NULL,วิธีชำระเงิน,CASH/TRANSFER/CARD/QR
-payments,amount,"DECIMAL(12,2)",NOT NULL,จำนวนเงินที่ชำระ,>= 0
-payments,reference_no,VARCHAR(80),NULL,เลขอ้างอิง,ใช้กับ Transfer/QR/Card ได้
-\ncustomers,credit_balance,DECIMAL(12\,2),NOT NULL DEFAULT 0,ยอดหนี้สะสมของลูกค้า\ncustomers,loyalty_points,INT,NOT NULL DEFAULT 0,แต้มสะสมของลูกค้า\nproducts,expiry_date,DATE,NULL,วันหมดอายุของสินค้า\nproducts,stock_qty,DECIMAL(12\,3),NOT NULL DEFAULT 0,รองรับสินค้าชั่งน้ำหนัก/เศษหน่วย\nproducts,reorder_level,DECIMAL(12\,3),NOT NULL DEFAULT 0,จุดสั่งซื้อรองรับเศษหน่วย\ncashier_shifts,shift_id,INT,PK,รหัสกะพนักงาน\ncashier_shifts,opened_at,DATETIME,NOT NULL,เวลาเปิดกะ\ncashier_shifts,closed_at,DATETIME,NULL,เวลาปิดกะ\ncashier_shifts,opening_cash,DECIMAL(12\,2),NOT NULL DEFAULT 0,เงินสดตั้งต้น\ncashier_shifts,closing_cash_expected,DECIMAL(12\,2),NULL,เงินสดที่ระบบคาดหวังตอนปิดกะ\ncashier_shifts,closing_cash_actual,DECIMAL(12\,2),NULL,เงินสดที่นับได้จริงตอนปิดกะ\nsale_items,quantity,"DECIMAL(12,3)",NOT NULL,จำนวนสินค้าที่ขายรองรับเศษหน่วย\npurchase_items,quantity,"DECIMAL(12,3)",NOT NULL,จำนวนสินค้าที่รับเข้ารองรับเศษหน่วย\npayments,payment_method,VARCHAR(20),CHECK,รองรับ CASH TRANSFER CARD QR CREDIT\n
+products,category_id,INT,"FK, NOT NULL",รหัสหมวดหมู่,อ้างอิง categories.category_id; สินค้า 1 รายการอยู่ได้ 1 หมวดหมู่
+products,unit,VARCHAR(30),NOT NULL,หน่วยนับ,"ตัวอย่าง ชิ้น, ขวด, ถุง"
+products,cost_price,"DECIMAL(12,2)","NOT NULL, DEFAULT 0.00, CHECK >= 0",ราคาทุน,ราคาทุนต่อหน่วย
+products,selling_price,"DECIMAL(12,2)","NOT NULL, DEFAULT 0.00, CHECK >= 0",ราคาขาย,ราคาขายต่อหน่วย
+products,stock_qty,"DECIMAL(12,3)","NOT NULL, DEFAULT 0.000, CHECK >= 0",จำนวนคงเหลือ,รองรับจำนวนเศษหน่วย
+products,reorder_level,"DECIMAL(12,3)","NOT NULL, DEFAULT 0.000, CHECK >= 0",ระดับแจ้งเตือนสต็อก,จำนวนขั้นต่ำที่ใช้แจ้งเตือน
+products,expiry_date,DATE,NULL,วันหมดอายุ,YYYY-MM-DD; ไม่จำเป็นต้องมีทุกสินค้า
+products,active,BOOLEAN,"NOT NULL, DEFAULT TRUE",สถานะสินค้า,"TRUE=ใช้งาน, FALSE=ปิดใช้งาน"
+employees,employee_id,INT,"PK, AUTO_INCREMENT",รหัสพนักงาน,รหัสหลักของพนักงาน
+employees,employee_code,VARCHAR(20),"UNIQUE, NOT NULL",รหัสพนักงานแบบอ่านง่าย,ตัวอย่าง EMP001
+employees,employee_name,VARCHAR(150),NOT NULL,ชื่อ-นามสกุลพนักงาน,ชื่อเต็มพนักงาน
+employees,phone,VARCHAR(20),NULL,เบอร์โทรศัพท์,ข้อมูลติดต่อ
+employees,position,VARCHAR(80),NOT NULL,ตำแหน่ง,ตัวอย่าง Cashier
+employees,hire_date,DATE,NOT NULL,วันที่เริ่มงาน,รูปแบบ YYYY-MM-DD
+employees,active,BOOLEAN,"NOT NULL, DEFAULT TRUE",สถานะพนักงาน,"TRUE=ปฏิบัติงาน, FALSE=ไม่ใช้งาน"
+members,member_id,INT,"PK, AUTO_INCREMENT",รหัสสมาชิก,รหัสหลักของสมาชิก
+members,member_code,VARCHAR(20),"UNIQUE, NOT NULL",รหัสสมาชิกแบบอ่านง่าย,ตัวอย่าง CUS001
+members,member_name,VARCHAR(150),NOT NULL,ชื่อ-นามสกุลสมาชิก,ชื่อเต็มสมาชิก
+members,phone,VARCHAR(20),NULL,เบอร์โทรศัพท์,ข้อมูลติดต่อ
+members,active,BOOLEAN,"NOT NULL, DEFAULT TRUE",สถานะสมาชิก,"TRUE=ใช้งาน, FALSE=ปิดใช้งาน"
+members,loyalty_points,INT,"NOT NULL, DEFAULT 0, CHECK >= 0",คะแนนสะสม,คะแนนสะสมของสมาชิก ต้องไม่ติดลบ
+sales,sale_id,INT,"PK, AUTO_INCREMENT",รหัสการขาย,รหัสหลักของใบเสร็จ
+sales,sale_no,VARCHAR(30),"UNIQUE, NOT NULL",เลขที่ใบเสร็จ,รหัสอ้างอิงการขาย
+sales,sale_datetime,DATETIME,"NOT NULL, DEFAULT CURRENT_TIMESTAMP",วันเวลาที่ขาย,วันและเวลาที่ทำรายการ
+sales,member_id,INT,"FK, NULL",รหัสสมาชิก,อ้างอิง members.member_id; NULL ได้สำหรับลูกค้าทั่วไป
+sales,employee_id,INT,"FK, NOT NULL",รหัสพนักงานผู้ขาย,อ้างอิง employees.employee_id; การขายแต่ละครั้งมีพนักงาน 1 คน
+sales,discount_amount,"DECIMAL(12,2)","NOT NULL, DEFAULT 0.00, CHECK >= 0",ส่วนลด,ส่วนลดของใบเสร็จ
+sales,notes,VARCHAR(255),NULL,หมายเหตุ,ข้อมูลเพิ่มเติมของการขาย
+sales,total_amount,"DECIMAL(12,2)","NOT NULL, DEFAULT 0.00",ยอดรวมเงินสุทธิ,ตามสคีมาปัจจุบัน คำนวณจากยอดรายการหักส่วนลด
+sales,payment_method,VARCHAR(20),"NOT NULL, DEFAULT 'CASH'",วิธีชำระเงิน,เก็บใน sales เพื่อให้สอดคล้องกับระบบ 6 ตาราง; ค่าที่ใช้ขึ้นกับการตรวจสอบของแอป
+sale_detail,sale_id,INT,"PK, FK",รหัสการขาย,ส่วนหนึ่งของ Composite Primary Key; อ้างอิง sales.sale_id
+sale_detail,product_id,INT,"PK, FK",รหัสสินค้า,ส่วนหนึ่งของ Composite Primary Key; อ้างอิง products.product_id
+sale_detail,quantity,"DECIMAL(12,3)","NOT NULL, CHECK > 0",จำนวนที่ซื้อ,รองรับจำนวนเศษหน่วย
+sale_detail,unit_price,"DECIMAL(12,2)","NOT NULL, CHECK >= 0",ราคาต่อชิ้น ณ เวลาซื้อ,เก็บราคาขณะขาย ไม่เปลี่ยนตามราคาปัจจุบัน
